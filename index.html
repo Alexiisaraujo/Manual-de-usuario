@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual do Usuário — Adriele Borges</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --win-gray: #c0c0c0;
+    --win-dark: #808080;
+    --win-darker: #404040;
+    --win-light: #ffffff;
+    --win-blue: #000080;
+    --win-blue-light: #0000aa;
+    --win-titlebar: #000080;
+    --win-border-light: #ffffff;
+    --win-border-dark: #808080;
+    --win-border-darker: #404040;
+    --win-green: #008000;
+    --win-red: #800000;
+    --win-yellow: #ffff00;
+    --win-teal: #008080;
+    --pixel: 'Press Start 2P', monospace;
+    --mono: 'Share Tech Mono', monospace;
+    --vt: 'VT323', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; image-rendering: pixelated; }
+
+  body {
+    background: var(--win-teal);
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0,0,0,0.03) 1px,
+      rgba(0,0,0,0.03) 2px
+    );
+    font-family: var(--mono);
+    font-size: 14px;
+    color: #000;
+    min-height: 100vh;
+    padding: 20px;
+    cursor: default;
+  }
+
+  /* ── TASKBAR ── */
+  .taskbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 36px;
+    background: var(--win-gray);
+    border-top: 2px solid var(--win-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 8px;
+    z-index: 999;
+  }
+  .start-btn {
+    height: 26px;
+    padding: 0 10px;
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+    font-family: var(--pixel);
+    font-size: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+  }
+  .start-btn:active {
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+  }
+  .taskbar-clock {
+    margin-left: auto;
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    padding: 2px 10px;
+    font-family: var(--pixel);
+    font-size: 8px;
+  }
+  .taskbar-item {
+    height: 26px;
+    padding: 0 10px;
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    font-family: var(--pixel);
+    font-size: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── MAIN WINDOW ── */
+  .main-window {
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+    max-width: 960px;
+    margin: 0 auto 60px;
+    box-shadow: 4px 4px 0 #000;
+  }
+
+  /* ── TITLE BAR ── */
+  .title-bar {
+    background: linear-gradient(to right, var(--win-blue), #1084d0);
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  .title-bar-text {
+    color: white;
+    font-family: var(--pixel);
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .title-icon { font-size: 14px; }
+  .title-controls {
+    display: flex;
+    gap: 3px;
+  }
+  .title-btn {
+    width: 18px; height: 16px;
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+    font-family: var(--pixel);
+    font-size: 8px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    font-weight: bold;
+  }
+
+  /* ── MENU BAR ── */
+  .menu-bar {
+    background: var(--win-gray);
+    border-bottom: 1px solid var(--win-dark);
+    padding: 3px 8px;
+    display: flex;
+    gap: 2px;
+  }
+  .menu-item {
+    padding: 2px 8px;
+    font-family: var(--pixel);
+    font-size: 8px;
+    cursor: pointer;
+  }
+  .menu-item:hover { background: var(--win-blue); color: white; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    background: var(--win-gray);
+    border-bottom: 2px solid;
+    border-color: transparent transparent var(--win-dark) transparent;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .tool-sep {
+    width: 2px; height: 24px;
+    border-left: 1px solid var(--win-dark);
+    border-right: 1px solid var(--win-light);
+    margin: 0 4px;
+  }
+
+  /* ── NAV BUTTONS ── */
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+    font-family: var(--pixel);
+    font-size: 9px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+    box-shadow: 2px 2px 0 #000;
+    transition: none;
+  }
+  .nav-btn:hover {
+    background: #d4d0c8;
+  }
+  .nav-btn:active {
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    box-shadow: none;
+    transform: translate(2px, 2px);
+  }
+  .nav-btn-site { border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light); }
+  .nav-btn-admin { border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light); background: #d4e4f4; }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 16px;
+    background: var(--win-gray);
+  }
+
+  /* ── PANELS ── */
+  .panel {
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .panel-header {
+    background: var(--win-blue);
+    color: white;
+    font-family: var(--pixel);
+    font-size: 8px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel-body {
+    padding: 12px;
+  }
+
+  /* ── SECTION PANELS ── */
+  .section-window {
+    background: white;
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    margin-bottom: 16px;
+  }
+  .section-titlebar {
+    background: var(--win-blue);
+    color: white;
+    font-family: var(--pixel);
+    font-size: 9px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-body {
+    padding: 14px;
+    background: white;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  h1 {
+    font-family: var(--pixel);
+    font-size: 14px;
+    color: var(--win-blue);
+    margin-bottom: 12px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  }
+  h2 {
+    font-family: var(--pixel);
+    font-size: 10px;
+    color: var(--win-blue);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--win-dark);
+  }
+  h3 {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: var(--win-darker);
+    margin-bottom: 8px;
+    margin-top: 12px;
+  }
+  p {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 8px;
+    color: #111;
+  }
+  ul, ol {
+    padding-left: 20px;
+    margin-bottom: 10px;
+  }
+  li {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    color: #111;
+  }
+  li::marker { color: var(--win-blue); }
+  strong {
+    color: var(--win-blue);
+    font-weight: bold;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: #e8e8e8;
+    border: 1px solid var(--win-dark);
+    padding: 1px 6px;
+    color: var(--win-red);
+  }
+
+  /* ── CREDENTIALS BOX ── */
+  .credentials-box {
+    background: #ffffd0;
+    border: 3px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    padding: 14px 16px;
+    margin: 12px 0;
+    box-shadow: inset 1px 1px 0 #fff;
+  }
+  .credentials-box .cred-title {
+    font-family: var(--pixel);
+    font-size: 9px;
+    color: var(--win-red);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cred-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .cred-label {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: #555;
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .cred-value {
+    background: white;
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--win-green);
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+
+  /* ── WARNING BOX ── */
+  .warning-box {
+    background: #ffe0e0;
+    border: 2px solid var(--win-red);
+    padding: 10px 14px;
+    margin: 10px 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .warning-icon { font-size: 20px; flex-shrink: 0; }
+  .warning-text { font-family: var(--mono); font-size: 13px; line-height: 1.6; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: #ddeeff;
+    border: 2px solid var(--win-blue);
+    padding: 10px 14px;
+    margin: 10px 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .info-icon { font-size: 20px; flex-shrink: 0; }
+  .info-text { font-family: var(--mono); font-size: 13px; line-height: 1.6; }
+
+  /* ── FEATURE TABLE ── */
+  .feature-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border: 2px solid var(--win-darker);
+  }
+  .feature-table th {
+    background: var(--win-blue);
+    color: white;
+    font-family: var(--pixel);
+    font-size: 7px;
+    padding: 6px 10px;
+    text-align: left;
+    border: 1px solid var(--win-blue-light);
+  }
+  .feature-table td {
+    padding: 7px 10px;
+    border: 1px solid var(--win-dark);
+    font-family: var(--mono);
+    font-size: 12px;
+    vertical-align: top;
+  }
+  .feature-table tr:nth-child(even) td { background: #e8e8e8; }
+  .feature-table tr:hover td { background: #d0e4ff; }
+
+  /* ── STEP BOXES ── */
+  .step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+  .step-num {
+    background: var(--win-blue);
+    color: white;
+    font-family: var(--pixel);
+    font-size: 9px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid;
+    border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+  }
+  .step-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    padding-top: 4px;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    background: var(--win-blue);
+    color: white;
+    font-family: var(--pixel);
+    font-size: 6px;
+    padding: 2px 6px;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .badge-green { background: var(--win-green); }
+  .badge-red { background: var(--win-red); }
+  .badge-yellow { background: #808000; }
+
+  /* ── DIVIDER ── */
+  .hr {
+    height: 4px;
+    background: transparent;
+    border-top: 2px solid var(--win-dark);
+    border-bottom: 2px solid var(--win-light);
+    margin: 16px 0;
+  }
+
+  /* ── COVER SECTION ── */
+  .cover {
+    background: var(--win-blue);
+    color: white;
+    padding: 32px 24px;
+    text-align: center;
+    border-bottom: 4px solid #000;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 4px,
+      rgba(255,255,255,0.04) 4px,
+      rgba(255,255,255,0.04) 8px
+    );
+  }
+  .cover-title {
+    font-family: var(--pixel);
+    font-size: 18px;
+    color: var(--win-yellow);
+    text-shadow: 3px 3px 0 #000;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .cover-sub {
+    font-family: var(--pixel);
+    font-size: 9px;
+    color: #a0c0ff;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .cover-version {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    position: relative;
+  }
+  .cover-icon {
+    font-size: 64px;
+    margin-bottom: 12px;
+    display: block;
+    filter: drop-shadow(3px 3px 0 #000);
+    position: relative;
+  }
+
+  /* ── TOC ── */
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--win-dark);
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+  }
+  .toc-item:hover .toc-text { color: var(--win-blue); text-decoration: underline; }
+  .toc-num {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--win-blue);
+    width: 28px;
+    flex-shrink: 0;
+  }
+  .toc-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    flex: 1;
+  }
+  .toc-dots { flex: 1; border-bottom: 2px dotted var(--win-dark); margin: 0 6px; }
+  .toc-page {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--win-darker);
+  }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    background: var(--win-gray);
+    border-top: 2px solid;
+    border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+    padding: 3px 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .status-item {
+    font-family: var(--pixel);
+    font-size: 7px;
+    padding: 2px 8px;
+    background: var(--win-gray);
+    border: 1px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    color: #000;
+  }
+
+  /* ── BIG BUTTONS AREA ── */
+  .btn-area {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    padding: 20px;
+    background: #e0e0e0;
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+  .big-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    background: var(--win-gray);
+    border: 3px solid;
+    border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+    min-width: 160px;
+    box-shadow: 3px 3px 0 #000;
+    transition: none;
+  }
+  .big-btn:hover { background: #d0d0d0; }
+  .big-btn:active {
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    box-shadow: none;
+    transform: translate(3px, 3px);
+  }
+  .big-btn-icon { font-size: 40px; }
+  .big-btn-label {
+    font-family: var(--pixel);
+    font-size: 8px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .big-btn-url {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--win-blue);
+    text-decoration: underline;
+  }
+  .big-btn-site .big-btn-icon { filter: drop-shadow(1px 1px 0 #000); }
+  .big-btn-admin { background: #d4e4f4; }
+
+  /* ── SCROLLBOX ── */
+  .scrollbox {
+    background: white;
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    padding: 10px;
+    max-height: 160px;
+    overflow-y: auto;
+    margin: 8px 0;
+  }
+  .scrollbox::-webkit-scrollbar { width: 16px; }
+  .scrollbox::-webkit-scrollbar-track { background: var(--win-gray); }
+  .scrollbox::-webkit-scrollbar-thumb {
+    background: var(--win-gray);
+    border: 2px solid;
+    border-color: var(--win-light) var(--win-darker) var(--win-darker) var(--win-light);
+  }
+
+  /* ── PIXELATED DECORATIONS ── */
+  .pixel-border {
+    border: 4px solid transparent;
+    border-image: repeating-linear-gradient(
+      45deg,
+      #000 0,
+      #000 1px,
+      transparent 0,
+      transparent 50%
+    ) 4;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    height: 18px;
+    background: white;
+    border: 2px solid;
+    border-color: var(--win-darker) var(--win-light) var(--win-light) var(--win-darker);
+    margin: 6px 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--win-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--pixel);
+    font-size: 7px;
+    letter-spacing: 0.1em;
+  }
+
+  /* Clock updater */
+  #clock { font-family: var(--pixel); font-size: 8px; }
+
+  a { color: var(--win-blue); }
+  a:hover { color: var(--win-red); }
+
+  .emoji-bullet { margin-right: 6px; }
+
+  @media (max-width: 600px) {
+    body { padding: 8px; }
+    .big-btn { min-width: 130px; padding: 12px 16px; }
+    .cover-title { font-size: 12px; }
+    .cover-icon { font-size: 40px; }
+    .feature-table { font-size: 11px; }
+    .fg-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- MAIN WINDOW -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="main-window">
+
+  <!-- Title Bar -->
+  <div class="title-bar">
+    <div class="title-bar-text">
+      <span class="title-icon">📄</span>
+      Manual do Usuário — Adriele Borges Clínica de Massagens v1.0
+    </div>
+    <div class="title-controls">
+      <button class="title-btn">_</button>
+      <button class="title-btn">□</button>
+      <button class="title-btn">✕</button>
+    </div>
+  </div>
+
+  <!-- Menu Bar -->
+  <div class="menu-bar">
+    <span class="menu-item">Arquivo</span>
+    <span class="menu-item">Editar</span>
+    <span class="menu-item">Ver</span>
+    <span class="menu-item">Ajuda</span>
+  </div>
+
+  <!-- Cover -->
+  <div class="cover">
+    <span class="cover-icon">💆</span>
+    <div class="cover-title">MANUAL DO USUÁRIO</div>
+    <div class="cover-sub">Clínica de Massagens — Adriele Borges</div>
+    <div class="cover-version">Versão 1.0 &nbsp;|&nbsp; Maio 2025 &nbsp;|&nbsp; Sistema Web Completo</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ── BUTTONS ── -->
+    <div class="btn-area">
+      <a href="https://clinicademasajes.vercel.app/" target="_blank" class="big-btn big-btn-site">
+        <span class="big-btn-icon">🌐</span>
+        <span class="big-btn-label">ACESSAR<br>O SITE</span>
+        <span class="big-btn-url">clinicademasajes.vercel.app</span>
+      </a>
+      <a href="https://clinicademasajes.vercel.app/admin" target="_blank" class="big-btn big-btn-admin">
+        <span class="big-btn-icon">🔐</span>
+        <span class="big-btn-label">PAINEL<br>ADMIN</span>
+        <span class="big-btn-url">clinicademasajes.vercel.app/admin</span>
+      </a>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ── ÍNDICE ── -->
+    <div class="section-window">
+      <div class="section-titlebar">
+        📋 &nbsp; ÍNDICE DO MANUAL
+      </div>
+      <div class="section-body" style="padding: 16px;">
+        <a href="#sec-intro" class="toc-item">
+          <span class="toc-num">01</span>
+          <span class="toc-text">Introdução ao Sistema</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-site" class="toc-item">
+          <span class="toc-num">02</span>
+          <span class="toc-text">O Site Público (Visitantes)</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-admin-acesso" class="toc-item">
+          <span class="toc-num">03</span>
+          <span class="toc-text">Como Acessar o Painel Admin</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-admin" class="toc-item">
+          <span class="toc-num">04</span>
+          <span class="toc-text">Painel Administrativo — Visão Geral</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-identidade" class="toc-item">
+          <span class="toc-num">05</span>
+          <span class="toc-text">Identidade — Nome e Logo do Site</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-hero" class="toc-item">
+          <span class="toc-num">06</span>
+          <span class="toc-text">Hero — Página Inicial</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-sobre" class="toc-item">
+          <span class="toc-num">07</span>
+          <span class="toc-text">Sobre — Apresentação Pessoal</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-servicos" class="toc-item">
+          <span class="toc-num">08</span>
+          <span class="toc-text">Serviços — Catálogo de Tratamentos</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-galeria" class="toc-item">
+          <span class="toc-num">09</span>
+          <span class="toc-text">Galeria de Fotos</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-video" class="toc-item">
+          <span class="toc-num">10</span>
+          <span class="toc-text">Vídeo do YouTube</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-reflexoes" class="toc-item">
+          <span class="toc-num">11</span>
+          <span class="toc-text">Reflexões — Blog / Artigos</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-depoimentos" class="toc-item">
+          <span class="toc-num">12</span>
+          <span class="toc-text">Depoimentos de Clientes</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-redes" class="toc-item">
+          <span class="toc-num">13</span>
+          <span class="toc-text">Redes Sociais e Contato</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-secoes" class="toc-item">
+          <span class="toc-num">14</span>
+          <span class="toc-text">Ativar e Desativar Seções</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-escassez" class="toc-item">
+          <span class="toc-num">15</span>
+          <span class="toc-text">Banner de Escassez / Aviso</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-tema" class="toc-item">
+          <span class="toc-num">16</span>
+          <span class="toc-text">Tema Visual e Tipografia</span>
+          <span class="toc-dots"></span>
+        </a>
+        <a href="#sec-conta" class="toc-item">
+          <span class="toc-num">17</span>
+          <span class="toc-text">Conta e Segurança</span>
+          <span class="toc-dots"></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 01: INTRODUÇÃO -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-intro" class="section-window">
+      <div class="section-titlebar">
+        📖 &nbsp; 01. INTRODUÇÃO AO SISTEMA
+      </div>
+      <div class="section-body">
+        <p>Bem-vinda ao manual do seu sistema web! Este guia explica tudo o que pode ser feito no site da <strong>Clínica de Massagens Adriele Borges</strong>.</p>
+        <p>O sistema possui <strong>dois ambientes</strong> principais:</p>
+
+        <div class="progress-bar" style="margin-top:14px;">
+          <div class="progress-fill" style="width:100%">SISTEMA 100% ONLINE</div>
+        </div>
+
+        <table class="feature-table" style="margin-top:14px;">
+          <thead>
+            <tr>
+              <th>Ambiente</th>
+              <th>Para quem?</th>
+              <th>O que faz?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>🌐 Site Público</strong></td>
+              <td>Visitantes e clientes</td>
+              <td>Apresenta os serviços, galeria, depoimentos, contato e botão de agendamento via WhatsApp</td>
+            </tr>
+            <tr>
+              <td><strong>🔐 Painel Admin</strong></td>
+              <td>Somente você (a proprietária)</td>
+              <td>Edita todo o conteúdo do site, aprova depoimentos, gerencia serviços e configura visual</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-box" style="margin-top:12px;">
+          <span class="info-icon">💡</span>
+          <div class="info-text">Qualquer alteração feita no painel admin é actualizada automaticamente no site público em tempo real — sem precisar de refazer o upload de nada!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 02: SITE PÚBLICO -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-site" class="section-window">
+      <div class="section-titlebar">
+        🌐 &nbsp; 02. O SITE PÚBLICO (O QUE OS VISITANTES VÊEM)
+      </div>
+      <div class="section-body">
+        <p>O site público é o que qualquer pessoa vê ao acessar o endereço:</p>
+        <p style="text-align:center; margin:12px 0;">
+          <code style="font-size:14px; padding:6px 14px;">https://clinicademasajes.vercel.app/</code>
+        </p>
+        <p>Ele é composto por várias <strong>seções</strong> que podem ser activadas ou desactivadas pelo admin:</p>
+
+        <br>
+        <h3>📌 SEÇÕES DO SITE</h3>
+
+        <table class="feature-table">
+          <thead>
+            <tr>
+              <th>Nº</th>
+              <th>Seção</th>
+              <th>O que mostra</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>🎯 <strong>Hero</strong></td>
+              <td>Primeira coisa que o visitante vê — título grande, subtítulo e botão "Agendar via WhatsApp"</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>📢 <strong>Banner de Escassez</strong></td>
+              <td>Faixa de aviso de urgência (ex: "últimas vagas") — aparece logo abaixo do menu</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>👤 <strong>Sobre</strong></td>
+              <td>Foto e texto de apresentação da Adriele, com contador de clientes atendidos</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>💆 <strong>Serviços</strong></td>
+              <td>Cards com os tratamentos disponíveis, duração e preços</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>🖼️ <strong>Galeria</strong></td>
+              <td>Fotos do espaço/ambiente — clicáveis para abrir em tela cheia</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>▶️ <strong>Vídeo</strong></td>
+              <td>Vídeo incorporado do YouTube</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>✍️ <strong>Reflexões</strong></td>
+              <td>Artigos curtos / textos reflexivos sobre bem-estar</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>⭐ <strong>Depoimentos</strong></td>
+              <td>Avaliações de clientes (com 5 estrelas) e formulário para enviar novos depoimentos</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>📞 <strong>Contato</strong></td>
+              <td>Links para WhatsApp, Instagram e E-mail</td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>💚 <strong>Botão WhatsApp Flutuante</strong></td>
+              <td>Ícone do WhatsApp fixo no canto inferior direito (visível em todas as páginas)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-box" style="margin-top:12px;">
+          <span class="info-icon">📱</span>
+          <div class="info-text">O site é totalmente responsivo — funciona perfeitamente em telemóveis, tablets e computadores.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 03: COMO ACESSAR O ADMIN -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-admin-acesso" class="section-window">
+      <div class="section-titlebar">
+        🔑 &nbsp; 03. COMO ACESSAR O PAINEL ADMIN
+      </div>
+      <div class="section-body">
+        <p>O painel administrativo fica no endereço:</p>
+        <p style="text-align:center; margin:12px 0;">
+          <code style="font-size:14px; padding:6px 14px;">https://clinicademasajes.vercel.app/admin</code>
+        </p>
+
+        <p>Ao abrir esse link, aparecerá uma tela de login. Utilize as seguintes credenciais:</p>
+
+        <div class="credentials-box">
+          <div class="cred-title">🔐 DADOS DE ACESSO DO ADMINISTRADOR</div>
+          <div class="cred-row">
+            <span class="cred-label">UTILIZADOR</span>
+            <span class="cred-value">clinicaadmin@gmail.com</span>
+          </div>
+          <div class="cred-row">
+            <span class="cred-label">SENHA</span>
+            <span class="cred-value">admin2026</span>
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <span class="warning-icon">⚠️</span>
+          <div class="warning-text"><strong>IMPORTANTE:</strong> Não partilhe estas credenciais com ninguém. A senha pode ser alterada dentro do painel, na seção <em>"Conta"</em>. Caso esqueça a senha, entre em contato com o programador.</div>
+        </div>
+
+        <h3>PASSO A PASSO PARA ENTRAR</h3>
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Aceda ao link: <code>clinicademasajes.vercel.app/admin</code></span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">Digite o e-mail: <code>clinicaadmin@gmail.com</code></span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">Digite a senha: <code>admin2026</code></span>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <span class="step-text">Clique em <strong>"Entrar"</strong> — o painel abrirá automaticamente</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 04: VISÃO GERAL DO ADMIN -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-admin" class="section-window">
+      <div class="section-titlebar">
+        🖥️ &nbsp; 04. PAINEL ADMINISTRATIVO — VISÃO GERAL
+      </div>
+      <div class="section-body">
+        <p>O painel admin possui um <strong>menu lateral esquerdo</strong> com todos os módulos disponíveis. Basta clicar em cada item para editar aquela área do site.</p>
+        <p>No topo da barra lateral aparece o nome do site. No rodapé há um link para ver o site ao vivo e para sair da conta.</p>
+
+        <h3>📂 MÓDULOS DISPONÍVEIS NO MENU</h3>
+        <table class="feature-table">
+          <thead>
+            <tr>
+              <th>Ícone</th>
+              <th>Nome</th>
+              <th>Função</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>🏠</td><td><strong>Identidade</strong></td><td>Nome do site e logo</td></tr>
+            <tr><td>🎯</td><td><strong>Hero</strong></td><td>Título, subtítulo e imagem de fundo</td></tr>
+            <tr><td>👤</td><td><strong>Sobre</strong></td><td>Foto e texto de apresentação</td></tr>
+            <tr><td>💆</td><td><strong>Serviços</strong></td><td>Adicionar, editar e remover serviços</td></tr>
+            <tr><td>🖼️</td><td><strong>Galeria</strong></td><td>Gerir fotos</td></tr>
+            <tr><td>▶️</td><td><strong>Vídeo</strong></td><td>Link do YouTube</td></tr>
+            <tr><td>✍️</td><td><strong>Reflexões</strong></td><td>Artigos e textos publicáveis</td></tr>
+            <tr><td>⭐</td><td><strong>Depoimentos</strong></td><td>Aprovar ou excluir depoimentos de clientes</td></tr>
+            <tr><td>📞</td><td><strong>Redes</strong></td><td>WhatsApp, Instagram, E-mail</td></tr>
+            <tr><td>🔲</td><td><strong>Seções</strong></td><td>Ativar ou desativar partes do site</td></tr>
+            <tr><td>🎨</td><td><strong>Tema</strong></td><td>Escolher cor e estilo visual do site</td></tr>
+            <tr><td>🔤</td><td><strong>Tipografia</strong></td><td>Fonte e tamanho do texto</td></tr>
+            <tr><td>👤</td><td><strong>Conta</strong></td><td>Alterar senha de acesso</td></tr>
+          </tbody>
+        </table>
+
+        <div class="info-box">
+          <span class="info-icon">💾</span>
+          <div class="info-text">Em cada módulo existe um botão <strong>"Salvar"</strong>. Sempre clique em Salvar após fazer alterações. Aparecerá uma mensagem verde de confirmação no canto inferior direito do ecrã.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 05: IDENTIDADE -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-identidade" class="section-window">
+      <div class="section-titlebar">
+        🏠 &nbsp; 05. IDENTIDADE — NOME E LOGO DO SITE
+      </div>
+      <div class="section-body">
+        <p>Neste módulo pode alterar o <strong>nome do site</strong> e gerir o <strong>logo</strong>.</p>
+
+        <h3>O QUE PODE EDITAR</h3>
+        <ul>
+          <li><span class="emoji-bullet">📝</span><strong>Nome do site</strong> — aparece no menu de navegação e no rodapé do site</li>
+          <li><span class="emoji-bullet">🖼️</span><strong>URL do logo</strong> — link de uma imagem para usar como logotipo no menu</li>
+          <li><span class="emoji-bullet">🔄</span><strong>Activar/desactivar logo</strong> — pode optar por mostrar só o nome ou mostrar logo + nome</li>
+        </ul>
+
+        <div class="info-box">
+          <span class="info-icon">💡</span>
+          <div class="info-text">Para usar uma imagem como logo, faça o upload da imagem para um serviço como <code>imgbb.com</code> ou <code>imgur.com</code> e cole o link directo da imagem no campo indicado.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 06: HERO -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-hero" class="section-window">
+      <div class="section-titlebar">
+        🎯 &nbsp; 06. HERO — PÁGINA INICIAL
+      </div>
+      <div class="section-body">
+        <p>O <strong>Hero</strong> é a primeira secção que o visitante vê ao abrir o site. É a área de maior impacto visual.</p>
+
+        <h3>O QUE PODE EDITAR</h3>
+        <ul>
+          <li><span class="emoji-bullet">✏️</span><strong>Título principal</strong> — o texto grande em destaque (pode usar quebra de linha com Enter)</li>
+          <li><span class="emoji-bullet">💬</span><strong>Subtítulo</strong> — frase secundária abaixo do título</li>
+          <li><span class="emoji-bullet">🖼️</span><strong>Imagem de fundo</strong> — URL de uma foto para o fundo da secção hero</li>
+          <li><span class="emoji-bullet">📲</span><strong>Texto do botão</strong> — texto que aparece no botão de agendamento (ex: "Agendar via WhatsApp")</li>
+        </ul>
+
+        <div class="info-box">
+          <span class="info-icon">👆</span>
+          <div class="info-text">O botão do Hero leva automaticamente para o WhatsApp configurado na secção <strong>Redes</strong>. Não é necessário colocar o número manualmente aqui.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 07: SOBRE -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-sobre" class="section-window">
+      <div class="section-titlebar">
+        👤 &nbsp; 07. SOBRE — APRESENTAÇÃO PESSOAL
+      </div>
+      <div class="section-body">
+        <p>A secção <strong>Sobre</strong> apresenta a Adriele ao visitante, com foto e texto biográfico.</p>
+
+        <h3>O QUE PODE EDITAR</h3>
+        <ul>
+          <li><span class="emoji-bullet">📸</span><strong>Foto</strong> — URL de uma imagem (foto profissional da Adriele)</li>
+          <li><span class="emoji-bullet">📝</span><strong>Texto</strong> — pode usar HTML básico: <code>&lt;br&gt;</code> para nova linha, <code>&lt;em&gt;</code> para itálico, <code>&lt;strong&gt;</code> para negrito</li>
+          <li><span class="emoji-bullet">🔢</span><strong>Número de clientes</strong> — contador exibido na secção (ex: "300+")</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 08: SERVIÇOS -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-servicos" class="section-window">
+      <div class="section-titlebar">
+        💆 &nbsp; 08. SERVIÇOS — CATÁLOGO DE TRATAMENTOS
+      </div>
+      <div class="section-body">
+        <p>Aqui gere todos os tratamentos e serviços disponíveis na clínica.</p>
+
+        <h3>ADICIONAR NOVO SERVIÇO</h3>
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Clique no botão <strong>"+ Novo Serviço"</strong></span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">Preencha o <strong>nome</strong> do serviço (ex: "Massagem Relaxante")</span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">Escreva uma <strong>descrição</strong> breve</span>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <span class="step-text">Informe a <strong>duração</strong> (ex: "60 min")</span>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <span class="step-text">Informe o <strong>preço</strong> (ex: "R$ 150,00") — só aparece se os preços estiverem activados</span>
+        </div>
+        <div class="step">
+          <span class="step-num">6</span>
+          <span class="step-text">Clique em <strong>"Salvar"</strong></span>
+        </div>
+
+        <h3>EDITAR OU EXCLUIR SERVIÇO</h3>
+        <ul>
+          <li>Clique no ícone ✏️ ao lado do serviço para editar</li>
+          <li>Clique no ícone 🗑️ para excluir (pedirá confirmação)</li>
+        </ul>
+
+        <h3>MOSTRAR/OCULTAR PREÇOS</h3>
+        <ul>
+          <li>Existe um toggle (botão de ligar/desligar) chamado <strong>"Exibir preços"</strong></li>
+          <li>Quando desactivado, os preços ficam ocultos no site — útil se quiser que o cliente entre em contacto para saber o valor</li>
+        </ul>
+
+        <div class="warning-box">
+          <span class="warning-icon">⚠️</span>
+          <div class="warning-text">Após excluir um serviço, a operação não pode ser desfeita. Confirme bem antes de apagar.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 09: GALERIA -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-galeria" class="section-window">
+      <div class="section-titlebar">
+        🖼️ &nbsp; 09. GALERIA DE FOTOS
+      </div>
+      <div class="section-body">
+        <p>A galeria mostra fotos do espaço, ambiente e tratamentos da clínica. Os visitantes podem clicar nas fotos para vê-las em tamanho completo.</p>
+
+        <h3>ADICIONAR FOTO</h3>
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Faça o upload da sua foto num serviço gratuito (sugestão: <code>imgbb.com</code>)</span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">Copie o link directo da imagem (URL terminando em <code>.jpg</code>, <code>.png</code> etc.)</span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">Cole o link no campo <strong>"URL da foto"</strong> e clique <strong>"Adicionar"</strong></span>
+        </div>
+
+        <h3>REMOVER FOTO</h3>
+        <ul>
+          <li>Clique no ícone 🗑️ ou no botão de excluir ao lado de cada foto na lista</li>
+        </ul>
+
+        <div class="info-box">
+          <span class="info-icon">📸</span>
+          <div class="info-text">Use fotos em alta qualidade, de preferência na proporção quadrada (1:1) ou horizontal (4:3) para melhor aparência na galeria.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 10: VÍDEO -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-video" class="section-window">
+      <div class="section-titlebar">
+        ▶️ &nbsp; 10. VÍDEO DO YOUTUBE
+      </div>
+      <div class="section-body">
+        <p>Pode incorporar um vídeo do YouTube directamente no site.</p>
+
+        <h3>COMO CONFIGURAR</h3>
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Abra o vídeo no YouTube que deseja mostrar no site</span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">Clique em <strong>"Compartilhar" → "Incorporar"</strong> e copie apenas o link do <code>src</code></span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">O link terá o formato: <code>https://www.youtube.com/embed/XXXXXXXXXXX</code></span>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <span class="step-text">Cole esse link no campo indicado e clique <strong>"Salvar"</strong></span>
+        </div>
+
+        <div class="info-box">
+          <span class="info-icon">💡</span>
+          <div class="info-text">Se não quiser mostrar o vídeo, basta desactivar a seção "Vídeo" no módulo <strong>Seções</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 11: REFLEXÕES -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-reflexoes" class="section-window">
+      <div class="section-titlebar">
+        ✍️ &nbsp; 11. REFLEXÕES — BLOG / ARTIGOS
+      </div>
+      <div class="section-body">
+        <p>A seção de Reflexões funciona como um mini-blog. Pode publicar textos, pensamentos ou artigos sobre bem-estar, massagens e saúde.</p>
+
+        <h3>CRIAR NOVA REFLEXÃO</h3>
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Clique em <strong>"+ Nova Reflexão"</strong></span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">Preencha o <strong>título</strong></span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">Escreva a <strong>data</strong> (ex: "15 de maio, 2025")</span>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <span class="step-text">Escreva o <strong>texto</strong> da reflexão</span>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <span class="step-text">Marque a caixa <strong>"Publicado"</strong> para que apareça no site (ou deixe desmarcado para guardar como rascunho)</span>
+        </div>
+        <div class="step">
+          <span class="step-num">6</span>
+          <span class="step-text">Clique em <strong>"Salvar"</strong></span>
+        </div>
+
+        <h3>PUBLICAR / DESPUBLICAR</h3>
+        <ul>
+          <li>Na lista de reflexões, cada item tem um botão <strong>"Publicar"</strong> ou <strong>"Ocultar"</strong></li>
+          <li>Reflexões não publicadas ficam guardadas mas não aparecem no site</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 12: DEPOIMENTOS -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-depoimentos" class="section-window">
+      <div class="section-titlebar">
+        ⭐ &nbsp; 12. DEPOIMENTOS DE CLIENTES
+      </div>
+      <div class="section-body">
+        <p>Os visitantes podem enviar depoimentos directamente pelo site. Esses depoimentos ficam em fila de espera até você aprová-los.</p>
+
+        <h3>COMO FUNCIONA</h3>
+        <ul>
+          <li><span class="emoji-bullet">📝</span>Cliente preenche o formulário de depoimento no site</li>
+          <li><span class="emoji-bullet">⏳</span>O depoimento aparece na fila <strong>"Pendentes"</strong> no painel admin</li>
+          <li><span class="emoji-bullet">✅</span>Você revisa e clica <strong>"Aprovar"</strong> — o depoimento passa a aparecer no site</li>
+          <li><span class="emoji-bullet">❌</span>Ou clica <strong>"Excluir"</strong> para recusar o depoimento</li>
+        </ul>
+
+        <h3>GERIR DEPOIMENTOS APROVADOS</h3>
+        <ul>
+          <li>A lista <strong>"Aprovados"</strong> mostra todos os depoimentos visíveis no site</li>
+          <li>Pode excluir qualquer depoimento aprovado quando quiser</li>
+        </ul>
+
+        <div class="info-box">
+          <span class="info-icon">💡</span>
+          <div class="info-text">Revise os depoimentos regularmente para manter o conteúdo actualizado e evitar publicar textos inadequados.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 13: REDES SOCIAIS -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-redes" class="section-window">
+      <div class="section-titlebar">
+        📞 &nbsp; 13. REDES SOCIAIS E CONTATO
+      </div>
+      <div class="section-body">
+        <p>Configure os links de contacto que aparecem na secção de contato do site e no botão flutuante do WhatsApp.</p>
+
+        <h3>CAMPOS DISPONÍVEIS</h3>
+        <table class="feature-table">
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Como preencher</th>
+              <th>Exemplo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>💚 <strong>WhatsApp</strong></td>
+              <td>Número com código do país, sem espaços ou símbolos</td>
+              <td><code>5511999999999</code></td>
+            </tr>
+            <tr>
+              <td>📸 <strong>Instagram</strong></td>
+              <td>Apenas o nome de utilizador (sem o @)</td>
+              <td><code>adrieleborges</code></td>
+            </tr>
+            <tr>
+              <td>✉️ <strong>E-mail</strong></td>
+              <td>Endereço de e-mail completo</td>
+              <td><code>contato@clinica.com</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>BOTÃO WHATSAPP FLUTUANTE</h3>
+        <ul>
+          <li>Existe um toggle para activar/desactivar o botão verde do WhatsApp que fica fixo no canto inferior do site</li>
+          <li>Recomenda-se deixar sempre activado pois facilita muito o contacto dos clientes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 14: SEÇÕES -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-secoes" class="section-window">
+      <div class="section-titlebar">
+        🔲 &nbsp; 14. ATIVAR E DESATIVAR SEÇÕES DO SITE
+      </div>
+      <div class="section-body">
+        <p>Aqui pode controlar quais secções aparecem no site público. Cada secção tem um botão de ligar/desligar.</p>
+
+        <h3>SECÇÕES QUE PODEM SER CONTROLADAS</h3>
+        <table class="feature-table">
+          <thead>
+            <tr>
+              <th>Secção</th>
+              <th><span class="badge badge-green">LIGADO</span></th>
+              <th><span class="badge badge-red">DESLIGADO</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>🎯 Hero</td><td>A capa aparece no site</td><td>Site começa directo na próxima secção</td></tr>
+            <tr><td>👤 Sobre</td><td>Apresentação visível</td><td>Secção oculta aos visitantes</td></tr>
+            <tr><td>💆 Serviços</td><td>Catálogo visível</td><td>Serviços não aparecem</td></tr>
+            <tr><td>🖼️ Galeria</td><td>Fotos visíveis</td><td>Galeria oculta</td></tr>
+            <tr><td>▶️ Vídeo</td><td>Vídeo incorporado visível</td><td>Secção de vídeo oculta</td></tr>
+            <tr><td>✍️ Reflexões</td><td>Blog visível</td><td>Blog oculto</td></tr>
+            <tr><td>⭐ Depoimentos</td><td>Avaliações visíveis</td><td>Secção de avaliações oculta</td></tr>
+            <tr><td>📞 Contato</td><td>Links de contacto visíveis</td><td>Secção de contato oculta</td></tr>
+          </tbody>
+        </table>
+
+        <div class="info-box">
+          <span class="info-icon">💡</span>
+          <div class="info-text">Use esta funcionalidade para esconder temporariamente uma secção que está a ser preparada, sem precisar de apagar o conteúdo.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 15: ESCASSEZ -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-escassez" class="section-window">
+      <div class="section-titlebar">
+        📢 &nbsp; 15. BANNER DE ESCASSEZ / AVISO
+      </div>
+      <div class="section-body">
+        <p>O <strong>Banner de Escassez</strong> é uma faixa de texto que aparece no topo do site (logo abaixo do menu) para criar senso de urgência ou anunciar algo especial.</p>
+
+        <h3>EXEMPLOS DE USO</h3>
+        <ul>
+          <li><span class="emoji-bullet">⚡</span>"Últimas 3 vagas disponíveis esta semana!"</li>
+          <li><span class="emoji-bullet">🎁</span>"Promoção de lançamento — 20% de desconto até domingo"</li>
+          <li><span class="emoji-bullet">📅</span>"Agenda aberta para junho — agende já!"</li>
+        </ul>
+
+        <h3>COMO CONFIGURAR</h3>
+        <ul>
+          <li>Vá ao módulo <strong>Hero</strong> — o banner de escassez fica nesta área</li>
+          <li>Escreva o texto desejado no campo <strong>"Texto do banner"</strong></li>
+          <li>Utilize o toggle <strong>"Exibir banner"</strong> para ligar ou desligar</li>
+          <li>Clique <strong>"Salvar"</strong></li>
+        </ul>
+
+        <div class="info-box">
+          <span class="info-icon">📣</span>
+          <div class="info-text">Quando não houver nenhuma promoção ou aviso importante, deixe o banner desactivado para não poluir visualmente o site.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 16: TEMA -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-tema" class="section-window">
+      <div class="section-titlebar">
+        🎨 &nbsp; 16. TEMA VISUAL E TIPOGRAFIA
+      </div>
+      <div class="section-body">
+        <p>Pode alterar o visual geral do site sem tocar em nenhum código.</p>
+
+        <h3>TEMAS DE COR</h3>
+        <p>O sistema oferece vários temas pré-definidos. Cada tema altera:</p>
+        <ul>
+          <li><span class="emoji-bullet">🎨</span>Cores de fundo, botões e destaques</li>
+          <li><span class="emoji-bullet">✨</span>Cor dos títulos e elementos decorativos</li>
+        </ul>
+        <p>Para aplicar um tema:</p>
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Clique no tema desejado na grelha de pré-visualização</span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">O tema ficará marcado com uma borda dourada</span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">Clique <strong>"Aplicar Tema"</strong> para guardar</span>
+        </div>
+
+        <h3>TIPOGRAFIA (FONTES)</h3>
+        <p>Pode ajustar o estilo dos textos do site:</p>
+        <ul>
+          <li><span class="emoji-bullet">🔤</span><strong>Fonte do título</strong> — tipo de letra dos títulos principais</li>
+          <li><span class="emoji-bullet">📝</span><strong>Fonte do corpo</strong> — tipo de letra dos parágrafos</li>
+          <li><span class="emoji-bullet">📏</span><strong>Tamanho base</strong> — tamanho padrão do texto</li>
+        </ul>
+        <ul>
+          <li>Existe um botão <strong>"Repor padrão"</strong> para voltar à tipografia original caso algo não fique bem</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 17: CONTA -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="sec-conta" class="section-window">
+      <div class="section-titlebar">
+        🔐 &nbsp; 17. CONTA E SEGURANÇA
+      </div>
+      <div class="section-body">
+        <p>Neste módulo pode alterar a senha de acesso ao painel admin.</p>
+
+        <h3>COMO ALTERAR A SENHA</h3>
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Aceda ao módulo <strong>"Conta"</strong> no menu lateral</span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">Digite a <strong>senha actual</strong></span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">Digite a <strong>nova senha</strong> (mínimo 6 caracteres)</span>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <span class="step-text">Confirme a nova senha e clique <strong>"Alterar Senha"</strong></span>
+        </div>
+
+        <div class="warning-box">
+          <span class="warning-icon">⚠️</span>
+          <div class="warning-text"><strong>ATENÇÃO:</strong> Escolha uma senha forte e difícil de adivinhar. Misture letras, números e símbolos. Anote-a num local seguro — se a esquecer, precisará de contactar o programador para recuperar o acesso.</div>
+        </div>
+
+        <h3>SAIR DA CONTA</h3>
+        <ul>
+          <li>Na parte inferior do menu lateral existe o link <strong>"Sair"</strong></li>
+          <li>Sempre que terminar de editar o site, recomenda-se clicar em Sair</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ── BOTÕES FINAIS ── -->
+    <div class="btn-area">
+      <a href="https://clinicademasajes.vercel.app/" target="_blank" class="big-btn big-btn-site">
+        <span class="big-btn-icon">🌐</span>
+        <span class="big-btn-label">VER O SITE<br>AO VIVO</span>
+        <span class="big-btn-url">clinicademasajes.vercel.app</span>
+      </a>
+      <a href="https://clinicademasajes.vercel.app/admin" target="_blank" class="big-btn big-btn-admin">
+        <span class="big-btn-icon">🔐</span>
+        <span class="big-btn-label">ACESSAR<br>O ADMIN</span>
+        <span class="big-btn-url">clinicademasajes.vercel.app/admin</span>
+      </a>
+    </div>
+
+    <!-- ── CREDENTIALS REMINDER ── -->
+    <div class="credentials-box" style="margin-top:16px;">
+      <div class="cred-title">🔑 LEMBRETE: DADOS DE ACESSO AO ADMIN</div>
+      <div class="cred-row">
+        <span class="cred-label">UTILIZADOR</span>
+        <span class="cred-value">clinicaadmin@gmail.com</span>
+      </div>
+      <div class="cred-row">
+        <span class="cred-label">SENHA</span>
+        <span class="cred-value">admin2026</span>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- ── FOOTER ── -->
+    <div style="text-align:center; padding: 16px; font-family: var(--pixel); font-size: 8px; color: #555; line-height: 2;">
+      Manual do Usuário — Clínica de Massagens Adriele Borges<br>
+      Versão 1.0 &nbsp;·&nbsp; Maio 2025<br>
+      <span style="color:var(--win-blue);">★ Sistema Web Profissional ★</span>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-item">📄 Manual v1.0</span>
+    <span class="status-item">17 Módulos documentados</span>
+    <span class="status-item">PT-BR</span>
+    <span class="status-item" style="margin-left:auto;" id="status-clock">--:--</span>
+  </div>
+
+</div><!-- /main-window -->
+
+<!-- ── TASKBAR ── -->
+<div class="taskbar">
+  <button class="start-btn">▶ Iniciar</button>
+  <div class="taskbar-item">📄 Manual do Usuário</div>
+  <div class="taskbar-clock" id="clock">--:--</div>
+</div>
+
+<script>
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const t = h + ':' + m;
+    document.getElementById('clock').textContent = t;
+    const sc = document.getElementById('status-clock');
+    if (sc) sc.textContent = t;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  // Smooth scroll for TOC links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Hover effect on feature-table rows
+  document.querySelectorAll('.feature-table tbody tr').forEach(tr => {
+    tr.addEventListener('mouseenter', () => tr.style.background = '#d0e4ff');
+    tr.addEventListener('mouseleave', () => tr.style.background = '');
+  });
+</script>
+
+</body>
+</html>
