@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manuales de Usuario</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0f1a;
+      --surface: #111827;
+      --border: #1e2d45;
+      --accent: #00d4ff;
+      --accent2: #ff6b35;
+      --text: #e8edf5;
+      --muted: #5a6a82;
+      --card-bg: #141c2e;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      margin-bottom: 64px;
+    }
+
+    .header-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-tag::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,212,255,0.1);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 3px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .card-arrow {
+      margin-top: auto;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s, gap 0.2s;
+    }
+
+    .card:hover .card-arrow {
+      color: var(--accent);
+      gap: 12px;
+    }
+
+    /* States */
+    .state {
+      text-align: center;
+      padding: 80px 24px;
+      font-family: 'Space Mono', monospace;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .state-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    #manual-count {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="header">
+      <div class="header-tag">Alexiisaraujo</div>
+      <h1>Manuales de<br><span>Usuario</span></h1>
+      <p class="subtitle">Seleccioná el manual correspondiente<br>a tu producto o servicio.</p>
+    </header>
+
+    <div id="grid" class="grid">
+      <div class="state">
+        <div class="spinner"></div>
+        Cargando manuales...
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span id="manual-count">—</span>
+      <span>Actualizado automáticamente desde GitHub</span>
+    </footer>
+
+  </div>
+
+  <script>
+    const GITHUB_USER = 'Alexiisaraujo';
+    const GITHUB_REPO = 'Manual-de-usuario';
+    const BASE_URL    = `https://${GITHUB_USER}.github.io/${GITHUB_REPO}`;
+    const API_URL     = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/`;
+
+    function formatTitle(filename) {
+      // "manual-de-usuario-003.html" → "Manual de Usuario 003"
+      const base = filename.replace(/\.[^.]+$/, ''); // quitar extensión
+      return base
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+    }
+
+    function extractNumber(filename) {
+      const match = filename.match(/(\d+)/g);
+      return match ? match[match.length - 1] : '000';
+    }
+
+    async function loadManuals() {
+      const grid = document.getElementById('grid');
+      const countEl = document.getElementById('manual-count');
+
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('No se pudo acceder al repositorio');
+        const files = await res.json();
+
+        // Filtrar solo archivos que empiecen con "manual-de-usuario-"
+        const manuals = files
+          .filter(f => f.type === 'file' && /^manual-de-usuario-\d+/i.test(f.name))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (manuals.length === 0) {
+          grid.innerHTML = `
+            <div class="state" style="grid-column:1/-1">
+              <span class="state-icon">📂</span>
+              No hay manuales todavía.<br>Subí el primero al repositorio.
+            </div>`;
+          countEl.textContent = '0 manuales';
+          return;
+        }
+
+        countEl.textContent = `${manuals.length} manual${manuals.length !== 1 ? 'es' : ''} disponible${manuals.length !== 1 ? 's' : ''}`;
+
+        grid.innerHTML = manuals.map((file, i) => {
+          const num    = extractNumber(file.name);
+          const title  = formatTitle(file.name);
+          const url    = `${BASE_URL}/${file.name}`;
+          const delay  = i * 60;
+          return `
+            <a class="card" href="${url}" target="_blank" rel="noopener" style="animation-delay:${delay}ms">
+              <div class="card-number"># ${num}</div>
+              <div class="card-title">${title}</div>
+              <div class="card-arrow">Abrir manual <span>→</span></div>
+            </a>`;
+        }).join('');
+
+      } catch (err) {
+        grid.innerHTML = `
+          <div class="state" style="grid-column:1/-1">
+            <span class="state-icon">⚠️</span>
+            Error al cargar: ${err.message}<br>
+            <small>Verificá que el repositorio sea público.</small>
+          </div>`;
+        countEl.textContent = 'Error';
+      }
+    }
+
+    loadManuals();
+  </script>
+</body>
+</html>
